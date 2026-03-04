@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PostForge - AI Social Media Post Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #a5b4fc;
+            --bg: #0f0f14;
+            --bg-card: #1a1a24;
+            --bg-input: #252532;
+            --text: #f4f4f5;
+            --text-muted: #a1a1aa;
+            --border: #2e2e3a;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --twitter: #1da1f2;
+            --linkedin: #0a66c2;
+            --instagram: #e4405f;
+            --facebook: #1877f2;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .tagline {
+            color: var(--text-muted);
+            font-size: 16px;
+        }
+
+        .pro-badge {
+            background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+            color: #000;
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            margin-left: 8px;
+            text-transform: uppercase;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+
+        .input, textarea, select {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 15px;
+            font-family: inherit;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .platforms {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .platform-btn {
+            padding: 16px 12px;
+            background: var(--bg-input);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .platform-btn:hover {
+            border-color: var(--text-muted);
+        }
+
+        .platform-btn.active {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .platform-btn .icon {
+            font-size: 24px;
+            margin-bottom: 6px;
+        }
+
+        .platform-btn .name {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .platform-btn .char-limit {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .platform-btn.twitter.active { border-color: var(--twitter); }
+        .platform-btn.linkedin.active { border-color: var(--linkedin); }
+        .platform-btn.instagram.active { border-color: var(--instagram); }
+        .platform-btn.facebook.active { border-color: var(--facebook); }
+
+        .tones {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .tone-btn {
+            padding: 10px 18px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tone-btn:hover {
+            border-color: var(--text-muted);
+        }
+
+        .tone-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .generate-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .generate-btn:active {
+            transform: translateY(0);
+        }
+
+        .generate-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .usage-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: var(--bg-input);
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .usage-text {
+            color: var(--text-muted);
+        }
+
+        .usage-count {
+            font-weight: 600;
+            color: var(--primary-light);
+        }
+
+        .results {
+            display: none;
+        }
+
+        .results.show {
+            display: block;
+        }
+
+        .result-item {
+            background: var(--bg-input);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border);
+            position: relative;
+        }
+
+        .result-item h4 {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .result-item p {
+            font-size: 15px;
+            line-height: 1.7;
+            white-space: pre-wrap;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            padding: 8px 14px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-muted);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .copy-btn.copied {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .upgrade-banner {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(251, 191, 36, 0.1) 100%);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin-top: 24px;
+        }
+
+        .upgrade-banner h3 {
+            color: #fbbf24;
+            margin-bottom: 8px;
+        }
+
+        .upgrade-banner p {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        .upgrade-btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .upgrade-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .char-count {
+            text-align: right;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+
+        .char-count.warning {
+            color: var(--warning);
+        }
+
+        .char-count.over {
+            color: #ef4444;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        @media (max-width: 640px) {
+            .platforms {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .card {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">⚡</div>
+                PostForge
+                <span class="pro-badge">Pro</span>
+            </div>
+            <p class="tagline">AI-powered social media posts in seconds</p>
+        </header>
+
+        <div class="card">
+            <div class="usage-bar">
+                <span class="usage-text">Today's generations:</span>
+                <span class="usage-count"><span id="usageCount">3</span> / 5 free</span>
+            </div>
+
+            <div class="form-group">
+                <label>What is your post about?</label>
+                <input type="text" class="input" id="topic" placeholder="e.g., Launching a new product, Tips for remote work, Weekend project update...">
+            </div>
+
+            <div class="form-group">
+                <label>Target Platform</label>
+                <div class="platforms">
+                    <div class="platform-btn twitter active" data-platform="twitter">
+                        <div class="icon">𝕏</div>
+                        <div class="name">Twitter/X</div>
+                        <div class="char-limit">280 chars</div>
+                    </div>
+                    <div class="platform-btn linkedin" data-platform="linkedin">
+                        <div class="icon">in</div>
+                        <div class="name">LinkedIn</div>
+                        <div class="char-limit">3000 chars</div>
+                    </div>
+                    <div class="platform-btn instagram" data-platform="instagram">
+                        <div class="icon">📷</div>
+                        <div class="name">Instagram</div>
+                        <div class="char-limit">2200 chars</div>
+                    </div>
+                    <div class="platform-btn facebook" data-platform="facebook">
+                        <div class="icon">f</div>
+                        <div class="name">Facebook</div>
+                        <div class="char-limit">63206 chars</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Tone</label>
+                <div class="tones">
+                    <button class="tone-btn active" data-tone="professional">Professional</button>
+                    <button class="tone-btn" data-tone="casual">Casual</button>
+                    <button class="tone-btn" data-tone="humorous">Humorous</button>
+                    <button class="tone-btn" data-tone="inspirational">Inspirational</button>
+                    <button class="tone-btn" data-tone="persuasive">Persuasive</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Additional context (optional)</label>
+                <textarea id="context" placeholder="Any specific details, keywords, or tone adjustments..."></textarea>
+                <div class="char-count"><span id="contextCharCount">0</span> / 200</div>
+            </div>
+
+            <button class="generate-btn" id="generateBtn">
+                ⚡ Generate Post
+            </button>
+        </div>
+
+        <div class="results" id="results">
+            <div class="card">
+                <div class="result-item">
+                    <h4>Generated Post</h4>
+                    <p id="generatedPost"></p>
+                    <button class="copy-btn" id="copyBtn">📋 Copy</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="upgrade-banner" id="upgradeBanner" style="display: none;">
+            <h3>⚡ Unlock Unlimited Generations</h3>
+            <p>Get unlimited AI-generated posts, custom templates, and priority support.</p>
+            <button class="upgrade-btn">Upgrade to Pro - $9/mo</button>
+        </div>
+
+        <footer>
+            <p>Built with ⚡ for content creators</p>
+        </footer>
+    </div>
+
+    <script>
+        // State
+        let state = {
+            platform: 'twitter',
+            tone: 'professional',
+            usage: 3,
+            maxFree: 5
+        };
+
+        // Platform configs
+        const platforms = {
+            twitter: { name: 'Twitter/X', limit: 280 },
+            linkedin: { name: 'LinkedIn', limit: 3000 },
+            instagram: { name: 'Instagram', limit: 2200 },
+            facebook: { name: 'Facebook', limit: 63206 }
+        };
+
+        // Tone templates
+        const toneTemplates = {
+            professional: {
+                prefixes: ['Excited to share:', 'Proud to announce:', 'Thrilled to reveal:'],
+                structures: [
+                    '{topic}. {context} #professional #growth',
+                    'Big news! {topic}. {context} Learn more via link in bio.',
+                    'Announcement: {topic}. {context} Stay tuned for updates!'
+                ]
+            },
+            casual: {
+                prefixes: ['Check this out!', 'Had to share:', 'Guess what?'],
+                structures: [
+                    '{topic} 🚀 {context} #excited',
+                    'Just realized {topic}! {context} Pretty cool, right?',
+                    'Holy smokes, {topic}! {context} Mind = blown 🤯'
+                ]
+            },
+            humorous: {
+                prefixes: ['Plot twist:', 'In shocking news:', 'Breaking:'],
+                structures: [
+                    '{topic}. {context} Who else is hyped? 😂',
+                    'Fun fact: {topic}! {context} Not a drill!',
+                    '{topic} (yes, really) 🤯 {context} #squadgoals'
+                ]
+            },
+            inspirational: {
+                prefixes: ['Dream big:', 'Believe in the journey:', 'Manifesting:'],
+                structures: [
+                    '{topic} ✨ {context} The best is yet to come. #motivation',
+                    'Every journey begins with a single step. Today: {topic}. {context} #inspiration',
+                    '{topic} 🌟 Remember: dreams become reality. {context} #goals'
+                ]
+            },
+            persuasive: {
+                prefixes: ['Don\'t miss:', 'Join us:', 'Be part of:'],
+                structures: [
+                    '{topic} — and you should care because: {context} Limited time!',
+                    'Ready for {topic}? {context} Secure your spot now! ⏰',
+                    '{topic}. This changes everything. {context} Link in comments!'
+                ]
+            }
+        };
+
+        // DOM elements
+        const topicInput = document.getElementById('topic');
+        const contextInput = document.getElementById('context');
+        const contextCharCount = document.getElementById('contextCharCount');
+        const generateBtn = document.getElementById('generateBtn');
+        const resultsDiv = document.getElementById('results');
+        const generatedPost = document.getElementById('generatedPost');
+        const copyBtn = document.getElementById('copyBtn');
+        const usageCount = document.getElementById('usageCount');
+        const upgradeBanner = document.getElementById('upgradeBanner');
+
+        // Platform selection
+        document.querySelectorAll('.platform-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.platform-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                state.platform = btn.dataset.platform;
+            });
+        });
+
+        // Tone selection
+        document.querySelectorAll('.tone-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tone-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                state.tone = btn.dataset.tone;
+            });
+        });
+
+        // Character count for context
+        contextInput.addEventListener('input', () => {
+            const count = contextInput.value.length;
+            contextCharCount.textContent = count;
+            const charCountEl = document.querySelector('.char-count');
+            charCountEl.classList.remove('warning', 'over');
+            if (count > 200) charCountEl.classList.add('over');
+            else if (count > 150) charCountEl.classList.add('warning');
+        });
+
+        // Simple AI simulation - generates contextually relevant posts
+        function generatePost(topic, platform, tone, context) {
+            const templates = toneTemplates[tone];
+            const prefix = templates.prefixes[Math.floor(Math.random() * templates.prefixes.length)];
+            const structure = templates.structures[Math.floor(Math.random() * templates.structures.length)];
+            
+            let post = structure.replace('{topic}', topic);
+            post = post.replace('{context}', context || 'Check the link in bio for more details!');
+            
+            // Add platform-specific hashtags
+            const hashtags = {
+                twitter: ' #startup #tech',
+                linkedin: ' #professional #leadership',
+                instagram: ' #instagood #viral',
+                facebook: ' #fyp #trending'
+            };
+            
+            // Respect character limits
+            const limit = platforms[platform].limit;
+            if (post.length + hashtags[platform].length <= limit) {
+                post += hashtags[platform];
+            }
+            
+            // Truncate if needed
+            if (post.length > limit) {
+                post = post.substring(0, limit - 3) + '...';
+            }
+            
+            return post;
+        }
+
+        // Generate post
+        generateBtn.addEventListener('click', () => {
+            const topic = topicInput.value.trim();
+            
+            if (!topic) {
+                alert('Please enter a topic for your post!');
+                topicInput.focus();
+                return;
+            }
+
+            if (state.usage >= state.maxFree) {
+                upgradeBanner.style.display = 'block';
+                alert('You\'ve used all your free generations! Upgrade to Pro for unlimited posts.');
+                return;
+            }
+
+            // Show loading
+            generateBtn.textContent = '⏳ Generating...';
+            generateBtn.disabled = true;
+
+            setTimeout(() => {
+                const context = contextInput.value.trim();
+                const post = generatePost(topic, state.platform, state.tone, context);
+                
+                generatedPost.textContent = post;
+                resultsDiv.classList.add('show');
+                
+                // Update usage
+                state.usage++;
+                usageCount.textContent = state.usage;
+                
+                if (state.usage >= state.maxFree) {
+                    upgradeBanner.style.display = 'block';
+                }
+                
+                // Reset button
+                generateBtn.textContent = '⚡ Generate Post';
+                generateBtn.disabled = false;
+                
+                // Scroll to results
+                resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 800);
+        });
+
+        // Copy to clipboard
+        copyBtn.addEventListener('click', async () => {
+            const text = generatedPost.textContent;
+            
+            try {
+                await navigator.clipboard.writeText(text);
+                copyBtn.textContent = '✓ Copied!';
+                copyBtn.classList.add('copied');
+                
+                setTimeout(() => {
+                    copyBtn.textContent = '📋 Copy';
+                    copyBtn.classList.remove('copied');
+                }, 2000);
+            } catch (err) {
+                // Fallback
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                
+                copyBtn.textContent = '✓ Copied!';
+                copyBtn.classList.add('copied');
+                
+                setTimeout(() => {
+                    copyBtn.textContent = '📋 Copy';
+                    copyBtn.classList.remove('copied');
+                }, 2000);
+            }
+        });
+    </script>
+</body>
+</html>
